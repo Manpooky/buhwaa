@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Upload, FileText, Download, AlertCircle, CheckCircle } from 'lucide-react';
+import { useUploadDocument } from '../Hooks/useUploadDocument';
 
 const ImmigrationFormAnalyzer = () => {
+    const { uploadDocument, uploadState } = useUploadDocument()
     const [file, setFile] = useState<File | null>(null);
     const [extractedText, setExtractedText] = useState<string>('');
     const [analysisResult, setAnalysisResult] = useState<any>(null);
@@ -50,7 +52,6 @@ PART 3: PROCESSING INFORMATION
 
     // Simulated Llama 4 analysis function
     const analyzeWithLlama4 = async (text: string) => {
-        // In real implementation, you'd call your Llama 4 API
         await new Promise(resolve => setTimeout(resolve, 3000));
 
         return {
