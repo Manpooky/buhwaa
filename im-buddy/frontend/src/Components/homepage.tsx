@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { Upload, FileText, Eye, Download, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, FileText, Download, AlertCircle, CheckCircle } from 'lucide-react';
 
 const ImmigrationFormAnalyzer = () => {
-    const [file, setFile] = useState(null);
-    const [extractedText, setExtractedText] = useState('');
-    const [analysisResult, setAnalysisResult] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [currentStep, setCurrentStep] = useState(1);
-    const [error, setError] = useState('');
+    const [file, setFile] = useState<File | null>(null);
+    const [extractedText, setExtractedText] = useState<string>('');
+    const [analysisResult, setAnalysisResult] = useState<any>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [currentStep, setCurrentStep] = useState<number>(1);
+    const [error, setError] = useState<string>('');
 
     // Simulated OCR/Text extraction function
-    const extractTextFromFile = async (file) => {
+    const extractTextFromFile = async (file: File) => {
         // In real implementation, you'd use actual OCR libraries
         // For demo purposes, we'll simulate this
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -49,7 +49,7 @@ PART 3: PROCESSING INFORMATION
     };
 
     // Simulated Llama 4 analysis function
-    const analyzeWithLlama4 = async (text) => {
+    const analyzeWithLlama4 = async (text: string) => {
         // In real implementation, you'd call your Llama 4 API
         await new Promise(resolve => setTimeout(resolve, 3000));
 
@@ -158,10 +158,10 @@ PART 3: PROCESSING INFORMATION
         };
     };
 
-    const handleFileUpload = (event) => {
-        const uploadedFile = event.target.files[0];
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const uploadedFile = event.target.files?.[0];
         if (uploadedFile) {
-            setFile(uploadedFile);
+            setFile(uploadedFile as File);
             setError('');
             setCurrentStep(1);
             setExtractedText('');
@@ -353,7 +353,7 @@ PART 3: PROCESSING INFORMATION
                             {/* Fields Analysis */}
                             <div className="space-y-4">
                                 <h3 className="font-semibold text-gray-900">Extracted Fields ({analysisResult.fields.length})</h3>
-                                {analysisResult.fields.map((field, index) => (
+                                {analysisResult.fields.map((field: any, index: number) => (
                                     <div key={index} className="border border-gray-200 rounded-lg p-4">
                                         <div className="flex items-center justify-between mb-2">
                                             <h4 className="font-medium text-gray-900">{field.field_name}</h4>
@@ -385,7 +385,7 @@ PART 3: PROCESSING INFORMATION
                                             <div className="text-sm text-gray-500">
                                                 <span className="font-medium">Options:</span>
                                                 <ul className="list-disc list-inside mt-1">
-                                                    {field.options.map((option, optIndex) => (
+                                                    {field.options.map((option: any, optIndex: number) => (
                                                         <li key={optIndex}>{option}</li>
                                                     ))}
                                                 </ul>
