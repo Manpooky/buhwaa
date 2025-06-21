@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     # Custom apps
     'apps.visa_info',
     'apps.translations',
-    'apps.tips',
+    # 'apps.tips',  # Removed for now
 ]
 
 MIDDLEWARE = [
@@ -95,6 +95,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# Media files (user-uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -115,4 +119,16 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
-} 
+}
+
+# Supabase Storage settings
+SUPABASE_URL = config('SUPABASE_URL', default='')
+SUPABASE_ANON_KEY = config('SUPABASE_ANON_KEY', default='')
+SUPABASE_STORAGE_BUCKET = config('SUPABASE_STORAGE_BUCKET', default='documents')
+
+# Use Supabase for file storage when credentials are available
+if SUPABASE_URL and SUPABASE_ANON_KEY:
+    DEFAULT_FILE_STORAGE = 'services.supabase_storage.SupabaseStorage'
+    SUPABASE_STORAGE_OPTIONS = {
+        'bucket_name': SUPABASE_STORAGE_BUCKET,
+    } 
