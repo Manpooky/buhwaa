@@ -1,0 +1,20 @@
+{
+  "name": "im-buddy",
+  "version": "1.0.0",
+  "description": "Immigration form translation and assistance tool",
+  "scripts": {
+    "setup": "./scripts/setup.sh",
+    "start": "./scripts/start.sh",
+    "start:backend": "cd backend && python manage.py runserver",
+    "start:frontend": "cd frontend && npm run dev",
+    "install:backend": "pip install -r backend/requirements.txt",
+    "install:frontend": "cd frontend && npm install",
+    "deploy": "./scripts/deploy.sh"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "author": "",
+  "license": "MIT"
+} 
