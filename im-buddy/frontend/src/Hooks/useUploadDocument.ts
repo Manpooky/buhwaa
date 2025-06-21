@@ -64,24 +64,7 @@ export function useUploadDocument() {
     },
   })
 
-  const startAnalysisMutation = useMutation({
-    mutationFn: async (jobId: string) => {
-      const response = await fetch("http://localhost:8000/api/start-analysis", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId }),
-      })
-      return response.json()
-    },
-    //Error and data handling will be handled by a seperate function that will pull the analysis data/status
-    onSuccess: (data) => {
-      setUploadState((prev) => ({
-        ...prev,
-        status: "processing",
-        jobId: data.jobId,
-      }))
-    },
-  })
+ 
 
   async function uploadWithMetrics(file: File, onProgress: (progress: Partial<UploadProgress>) => void) {
     const chunkSize = 5 * 1024 * 1024 //5mb
@@ -163,8 +146,6 @@ export function useUploadDocument() {
         }))
       }
 
-      //Start analysis
-      await startAnalysisMutation.mutateAsync(jobId)
     } catch (error: any) {
       setUploadState((prev) => ({
         ...prev,

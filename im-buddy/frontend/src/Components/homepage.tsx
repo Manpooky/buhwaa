@@ -3,7 +3,7 @@ import { Upload, FileText, Download, AlertCircle, CheckCircle } from 'lucide-rea
 import { useUploadDocument } from '../Hooks/useUploadDocument';
 
 const ImmigrationFormAnalyzer = () => {
-    const { uploadDocument, uploadState } = useUploadDocument()
+    // const { uploadFiles, uploadState } = useUploadDocument()
     const [file, setFile] = useState<File | null>(null);
     const [extractedText, setExtractedText] = useState<string>('');
     const [analysisResult, setAnalysisResult] = useState<any>(null);
