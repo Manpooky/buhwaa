@@ -5,198 +5,38 @@ import { useUploadDocument } from '../Hooks/useUploadDocument';
 const ImmigrationFormAnalyzer = () => {
     // const { uploadFiles, uploadState } = useUploadDocument()
     const [file, setFile] = useState<File | null>(null);
-    const [extractedText, setExtractedText] = useState<string>('');
-    const [analysisResult, setAnalysisResult] = useState<any>(null);
+    const [translatedDocument, setTranslatedDocument] = useState<string>('');
+    const [completedDocument, setCompletedDocument] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [error, setError] = useState<string>('');
-
-    // Simulated OCR/Text extraction function
-    const extractTextFromFile = async (file: File) => {
-        // In real implementation, you'd use actual OCR libraries
-        // For demo purposes, we'll simulate this
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Simulated extracted text from an immigration form
-        return `UNITED STATES CITIZENSHIP AND IMMIGRATION SERVICES
-FORM I-485 - APPLICATION TO ADJUST STATUS TO PERMANENT RESIDENT
-
-PART 1: INFORMATION ABOUT YOU
-
-1. Family Name (Last Name): _______________
-2. Given Name (First Name): _______________  
-3. Middle Name: _______________
-4. Other Names Used: _______________
-5. Date of Birth (mm/dd/yyyy): _______________
-6. Country of Birth: _______________
-7. Country of Citizenship or Nationality: _______________
-8. U.S. Social Security Number (if any): _______________
-9. USCIS Online Account Number (if any): _______________
-
-PART 2: APPLICATION TYPE OR FILING CATEGORY
-
-1. I am applying for adjustment of status because:
-   a. [ ] An immigrant petition giving me an immediately available immigrant visa number that has been approved
-   b. [ ] My spouse or parent applied for adjustment of status or was granted lawful permanent residence
-   c. [ ] I entered as a K-1 fiancé(e) of a U.S. citizen whom I married within 90 days
-   
-2. Priority Date (if any): _______________
-
-PART 3: PROCESSING INFORMATION
-
-1. Current Immigration Status: _______________
-2. Date of Last Arrival into the United States: _______________
-3. Place of Last Arrival into the United States: _______________
-4. Arrival/Departure Record (I-94) Number: _______________`;
-    };
-
+  
     // Simulated Llama 4 analysis function
-    const analyzeWithLlama4 = async (text: string) => {
+    const analyzeWithLlama4 = async (file: File) => {
         await new Promise(resolve => setTimeout(resolve, 3000));
-
-        return {
-            fields: [
-                {
-                    field_name: "family_name",
-                    description: "Last name or surname of the applicant",
-                    data_type: "text",
-                    required: true,
-                    validation_rules: "Letters only, no special characters",
-                    conditional_logic: "None",
-                    options: []
-                },
-                {
-                    field_name: "given_name",
-                    description: "First name of the applicant",
-                    data_type: "text",
-                    required: true,
-                    validation_rules: "Letters only, no special characters",
-                    conditional_logic: "None",
-                    options: []
-                },
-                {
-                    field_name: "middle_name",
-                    description: "Middle name of the applicant",
-                    data_type: "text",
-                    required: false,
-                    validation_rules: "Letters only, no special characters if provided",
-                    conditional_logic: "None",
-                    options: []
-                },
-                {
-                    field_name: "other_names",
-                    description: "Any other names previously used by the applicant",
-                    data_type: "text",
-                    required: false,
-                    validation_rules: "Letters only, multiple names separated by commas",
-                    conditional_logic: "None",
-                    options: []
-                },
-                {
-                    field_name: "date_of_birth",
-                    description: "Date of birth in MM/DD/YYYY format",
-                    data_type: "date",
-                    required: true,
-                    validation_rules: "Must be valid date in MM/DD/YYYY format, applicant must be at least 18 years old",
-                    conditional_logic: "None",
-                    options: []
-                },
-                {
-                    field_name: "country_of_birth",
-                    description: "Country where the applicant was born",
-                    data_type: "text",
-                    required: true,
-                    validation_rules: "Must be a valid country name",
-                    conditional_logic: "None",
-                    options: []
-                },
-                {
-                    field_name: "country_of_citizenship",
-                    description: "Country of current citizenship or nationality",
-                    data_type: "text",
-                    required: true,
-                    validation_rules: "Must be a valid country name",
-                    conditional_logic: "None",
-                    options: []
-                },
-                {
-                    field_name: "ssn",
-                    description: "U.S. Social Security Number if available",
-                    data_type: "text",
-                    required: false,
-                    validation_rules: "Must be 9 digits in format XXX-XX-XXXX if provided",
-                    conditional_logic: "Only required if applicant has been assigned an SSN",
-                    options: []
-                },
-                {
-                    field_name: "application_type",
-                    description: "Reason for applying for adjustment of status",
-                    data_type: "select",
-                    required: true,
-                    validation_rules: "Must select one option",
-                    conditional_logic: "Different supporting documents required based on selection",
-                    options: [
-                        "Immigrant petition with available visa number",
-                        "Spouse/parent adjustment application",
-                        "K-1 fiancé(e) marriage within 90 days"
-                    ]
-                },
-                {
-                    field_name: "priority_date",
-                    description: "Priority date from approved immigrant petition",
-                    data_type: "date",
-                    required: false,
-                    validation_rules: "Must be valid date in MM/DD/YYYY format if provided",
-                    conditional_logic: "Required only if application type is based on immigrant petition",
-                    options: []
-                }
-            ],
-            form_metadata: {
-                form_title: "Application to Adjust Status to Permanent Resident",
-                form_number: "I-485",
-                estimated_completion_time: "60-90 minutes"
-            }
-        };
     };
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDocumentInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         const uploadedFile = event.target.files?.[0];
         if (uploadedFile) {
             setFile(uploadedFile as File);
             setError('');
             setCurrentStep(1);
-            setExtractedText('');
-            setAnalysisResult(null);
+            setTranslatedDocument('');
+            setCompletedDocument(null);
         }
     };
 
-    const handleExtractText = async () => {
+    const handleDocumentUpload = async (file: File) => {
         if (!file) return;
 
         setLoading(true);
         setError('');
 
         try {
-            const text = await extractTextFromFile(file);
-            setExtractedText(text);
-            setCurrentStep(2);
-        } catch (err) {
-            setError('Failed to extract text from file. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleAnalyzeForm = async () => {
-        if (!extractedText) return;
-
-        setLoading(true);
-        setError('');
-
-        try {
-            const result = await analyzeWithLlama4(extractedText);
-            setAnalysisResult(result);
-            setCurrentStep(3);
+            const result = await analyzeWithLlama4(file);
+            setCompletedDocument(result);
+            setCurrentStep(3);  
         } catch (err) {
             setError('Failed to analyze form. Please try again.');
         } finally {
@@ -205,9 +45,9 @@ PART 3: PROCESSING INFORMATION
     };
 
     const exportAnalysis = () => {
-        if (!analysisResult) return;
+        if (!completedDocument) return;
 
-        const dataStr = JSON.stringify(analysisResult, null, 2);
+        const dataStr = JSON.stringify(completedDocument, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
@@ -224,7 +64,7 @@ PART 3: PROCESSING INFORMATION
                         Immigration Form Analyzer
                     </h1>
                     <p className="text-gray-600 mb-8">
-                        Phase 1: Upload an immigration form to extract and analyze all required fields
+                        Phase 1: Upload your immigration form
                     </p>
 
                     {/* Progress Steps */}
@@ -242,7 +82,7 @@ PART 3: PROCESSING INFORMATION
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
                                 2
                             </div>
-                            <span className="ml-2 font-medium">Extract Text</span>
+                            <span className="ml-2 font-medium">Fill out the document in your language</span>
                         </div>
                         <div className="flex-1 h-1 mx-4 bg-gray-200">
                             <div className={`h-full ${currentStep >= 3 ? 'bg-blue-600' : 'bg-gray-200'} transition-all`}></div>
@@ -251,7 +91,7 @@ PART 3: PROCESSING INFORMATION
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
                                 3
                             </div>
-                            <span className="ml-2 font-medium">Analyze Fields</span>
+                            <span className="ml-2 font-medium">We return the document in the needed language</span>
                         </div>
                     </div>
 
@@ -263,69 +103,26 @@ PART 3: PROCESSING INFORMATION
                     )}
 
                     {/* Step 1: File Upload */}
-                    <div className="mb-8">
-                        <h2 className="text-xl font-semibold mb-4">Step 1: Upload Immigration Form</h2>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                            <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <div className="mb-4">
-                                <label htmlFor="file-upload" className="cursor-pointer">
-                  <span className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    Choose File
-                  </span>
-                                    <input
-                                        id="file-upload"
-                                        type="file"
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                        onChange={handleFileUpload}
-                                        className="hidden"
-                                    />
-                                </label>
-                            </div>
-                            <p className="text-gray-500">
-                                Upload PDF or image files (JPG, PNG) of immigration forms
-                            </p>
-                            {file && (
-                                <div className="mt-4 p-3 bg-gray-50 rounded flex items-center justify-center">
-                                    <FileText className="w-5 h-5 text-gray-600 mr-2" />
-                                    <span className="text-gray-700">{file.name}</span>
-                                </div>
-                            )}
-                        </div>
-                        {file && currentStep === 1 && (
-                            <button
-                                onClick={handleExtractText}
-                                disabled={loading}
-                                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-                            >
-                                {loading ? 'Extracting Text...' : 'Extract Text'}
-                            </button>
-                        )}
-                    </div>
+                   <FileUpload file={file} handleDocumentInput={handleDocumentInput} handleDocumentUpload={handleDocumentUpload} loading={loading}/>
 
-                    {/* Step 2: Extracted Text */}
-                    {extractedText && (
+                    {/* Step 2: Translated Document */}
+                    {translatedDocument && (
                         <div className="mb-8">
-                            <h2 className="text-xl font-semibold mb-4">Step 2: Extracted Text</h2>
+                            <h2 className="text-xl font-semibold mb-4">Step 2: Fill out form in your language</h2>
                             <div className="bg-gray-50 border rounded-lg p-4 max-h-64 overflow-y-auto">
-                                <pre className="text-sm text-gray-700 whitespace-pre-wrap">{extractedText}</pre>
+                                <pre className="text-sm text-gray-700 whitespace-pre-wrap">{translatedDocument}</pre>
                             </div>
                             {currentStep === 2 && (
-                                <button
-                                    onClick={handleAnalyzeForm}
-                                    disabled={loading}
-                                    className="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
-                                >
-                                    {loading ? 'Analyzing with Llama 4...' : 'Analyze Form Fields'}
-                                </button>
+                                <FileUpload file={file} handleDocumentInput={handleDocumentInput} handleDocumentUpload={handleDocumentUpload} loading={loading}/>
                             )}
                         </div>
                     )}
 
-                    {/* Step 3: Analysis Results */}
-                    {analysisResult && (
+                    {/* Step 3: Final Document */}
+                    {completedDocument && (
                         <div className="mb-8">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl font-semibold">Step 3: Field Analysis Results</h2>
+                                <h2 className="text-xl font-semibold">Step 3: Recieve Your Form in Desired Language</h2>
                                 <button
                                     onClick={exportAnalysis}
                                     className="flex items-center bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
@@ -340,21 +137,21 @@ PART 3: PROCESSING INFORMATION
                                 <h3 className="font-semibold text-blue-900 mb-2">Form Information</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                     <div>
-                                        <span className="font-medium">Title:</span> {analysisResult.form_metadata.form_title}
+                                        <span className="font-medium">Title:</span> {completedDocument.form_metadata.form_title}
                                     </div>
                                     <div>
-                                        <span className="font-medium">Form Number:</span> {analysisResult.form_metadata.form_number}
+                                        <span className="font-medium">Form Number:</span> {completedDocument.form_metadata.form_number}
                                     </div>
                                     <div>
-                                        <span className="font-medium">Est. Time:</span> {analysisResult.form_metadata.estimated_completion_time}
+                                        <span className="font-medium">Est. Time:</span> {completedDocument.form_metadata.estimated_completion_time}
                                     </div>
                                 </div>
                             </div>
 
                             {/* Fields Analysis */}
                             <div className="space-y-4">
-                                <h3 className="font-semibold text-gray-900">Extracted Fields ({analysisResult.fields.length})</h3>
-                                {analysisResult.fields.map((field: any, index: number) => (
+                                <h3 className="font-semibold text-gray-900">Extracted Fields ({completedDocument.fields.length})</h3>
+                                {completedDocument.fields.map((field: any, index: number) => (
                                     <div key={index} className="border border-gray-200 rounded-lg p-4">
                                         <div className="flex items-center justify-between mb-2">
                                             <h4 className="font-medium text-gray-900">{field.field_name}</h4>
@@ -399,7 +196,7 @@ PART 3: PROCESSING INFORMATION
                             <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
                                 <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                                 <span className="text-green-700">
-                  Form analysis complete! Ready for Phase 2 (Translation)
+                  Form upload complete! Ready for Phase 2 
                 </span>
                             </div>
                         </div>
@@ -411,3 +208,47 @@ PART 3: PROCESSING INFORMATION
 };
 
 export default ImmigrationFormAnalyzer;
+
+function FileUpload({file, handleDocumentInput, handleDocumentUpload, loading}: 
+    {file: File | null, handleDocumentInput: (event: React.ChangeEvent<HTMLInputElement>) => void, handleDocumentUpload: (file: File) => void, loading: boolean}) {
+    return (
+        <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">Step 1: Upload Immigration Form</h2>
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+            <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <div className="mb-4">
+                <label htmlFor="file-upload" className="cursor-pointer">
+  <span className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+    Choose File
+  </span>
+                    <input
+                        id="file-upload"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={handleDocumentInput}
+                        className="hidden"
+                    />
+                </label>
+            </div>
+            <p className="text-gray-500">
+                Upload PDF or image files (JPG, PNG) of immigration forms
+            </p>
+            {file && (
+                <div className="mt-4 p-3 bg-gray-50 rounded flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-gray-600 mr-2" />
+                    <span className="text-gray-700">{file.name}</span>
+                </div>
+            )}
+        </div>
+        {file && (
+            <button
+                onClick={() => handleDocumentUpload(file)}
+                disabled={loading}
+                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            >
+                {loading ? 'Uploading...' : 'Upload'}
+            </button>
+        )}
+    </div>
+    )
+}
