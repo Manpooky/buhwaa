@@ -22,11 +22,11 @@ const ImmigrationFormAnalyzer = () => {
       const formData = new FormData()
       formData.append("file", file)
 
-      const response = await fetch("http://localhost:8000/api/initial-upload", {
+      const response = await fetch("http://localhost:8000/api/document/translate", {
         method: "POST",
         body: formData,
       })
-      if (!response.ok) throw new Error("Upload failed")
+      if (!response.ok) setError("Upload failed")
       return response.json()
     },
     onError: (error: any) => {
@@ -39,11 +39,11 @@ const ImmigrationFormAnalyzer = () => {
       const formData = new FormData()
       formData.append("file", file)
 
-      const response = await fetch("http://localhost:8000/api/translated-upload", {
+      const response = await fetch("http://localhost:8000/api/document/translate", {
         method: "POST",
         body: formData,
       })
-      if (!response.ok) throw new Error("Upload failed")
+      if (!response.ok) setError("Upload failed")
       return response.json()
     },
     onError: (error: any) => {

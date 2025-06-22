@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.shortcuts import redirect
 
 # Create Swagger schema view
 schema_view = get_schema_view(
@@ -22,6 +23,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('', lambda request: redirect('/swagger/')),
     path('admin/', admin.site.urls),
     # Include the main API urls from the backend root
     path('api/', include('urls')),
