@@ -1,17 +1,8 @@
-Django==4.2.7
-djangorestframework==3.14.0
-django-cors-headers==4.2.0
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+httpx==0.25.2
 python-dotenv==1.0.0
-requests==2.31.0
-supabase==1.0.3
-gunicorn==21.2.0
-
-python-decouple==3.8
-# PDF Processing
-PyPDF2==3.0.1
-pytesseract==0.3.10
-pdf2image==1.17.0
-pillow==10.2.0
-reportlab==3.6.12
-# API Documentation
-drf-yasg==1.21.7
+weasyprint==56.1
+markdown==3.4.3
+pymupdf==1.26.1
