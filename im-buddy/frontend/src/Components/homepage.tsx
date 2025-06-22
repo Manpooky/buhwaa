@@ -21,8 +21,10 @@ const ImmigrationFormAnalyzer = () => {
     mutationFn: async (file: File) => {
       const formData = new FormData()
       formData.append("file", file)
+      formData.append("source_language", "english")
+      formData.append("target_language", "spanish")
 
-      const response = await fetch("http://localhost:8000/api/document/translate", {
+      const response = await fetch("http://localhost:8000/translations/document/translate", {
         method: "POST",
         body: formData,
       })
@@ -39,7 +41,7 @@ const ImmigrationFormAnalyzer = () => {
       const formData = new FormData()
       formData.append("file", file)
 
-      const response = await fetch("http://localhost:8000/api/document/translate", {
+      const response = await fetch("http://localhost:8000/translations/document/translate", {
         method: "POST",
         body: formData,
       })
