@@ -15,11 +15,11 @@ export default function DropZone({ onFilesDrop }: { onFilesDrop: (files: File[])
   return (
     <div
       {...getRootProps()}
-      className={`dropzone bg-accent cursor-pointer p-20 ${isDragActive ? "drag-active" : ""}`}>
+      className={`dropzone bg-accent/70 hover:bg-accent cursor-pointer p-20 group ${isDragActive ? "drag-active" : ""}`}>
       <input {...getInputProps()} />
         <div className="flex flex-col gap-2">
-        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-500">
+        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4 group-hover:text-gray-500" />
+        <p className="text-gray-500 group-hover:text-gray-600">
                 Upload PDF or image files (JPG, PNG) of immigration forms
             </p>
         </div>
