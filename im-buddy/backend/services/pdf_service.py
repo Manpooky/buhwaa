@@ -5,6 +5,10 @@ import pytesseract
 from pdf2image import convert_from_path
 from PIL import Image
 import logging
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 logger = logging.getLogger(__name__)
 
@@ -84,4 +88,79 @@ def extract_text_with_ocr(pdf_path):
         return text
     except Exception as e:
         logger.error(f"Error extracting text with OCR: {str(e)}")
-        return "" 
+        return ""
+
+def create_pdf_from_text(text, filename="translated_document.pdf"):
+    """
+    Create a PDF document from translated text
+    
+    Args:
+        text (str): Text to include in the PDF
+        filename (str): Name of the output file
+        
+    Returns:
+        ContentFile: Django ContentFile object containing the PDF data
+    """
+    try:
+        # Create a buffer to hold the PDF data
+        buffer = BytesIO()
+        
+        # Create the PDF document using reportlab
+        pdf = canvas.Canvas(buffer, pagesize=letter)
+        
+        # Set font and size
+        pdf.setFont("Helvetica", 11)
+        
+        # Get page dimensions
+        width, height = letter
+        
+        # Split text into lines
+        y_position = height - 50  # Start 50 points from the top
+        margin = 50  # Left and right margin
+        line_height = 14  # Space between lines
+        
+        # Process the text line by line
+        for line in text.split('\n'):
+            # Process long lines by wrapping them
+            while line and y_position > margin:
+                if len(line) > 75:  # If line is too long
+                    # Find a space to break the line
+                    break_point = 75
+                    while break_point > 0 and line[break_point] != ' ':
+                        break_point -= 1
+                    
+                    # If no space found, just break at the maximum length
+                    if break_point == 0:
+                        break_point = 75
+                    
+                    # Write the line segment
+                    pdf.drawString(margin, y_position, line[:break_point])
+                    line = line[break_point:].lstrip()
+                else:
+                    # Write the entire line
+                    pdf.drawString(margin, y_position, line)
+                    line = ""
+                
+                # Move down for next line
+                y_position -= line_height
+                
+                # Check if we need a new page
+                if y_position <= margin:
+                    pdf.showPage()
+                    y_position = height - 50
+                    pdf.setFont("Helvetica", 11)  # Reset font after new page
+        
+        # Save the PDF
+        pdf.save()
+        
+        # Get the PDF data from the buffer
+        buffer.seek(0)
+        
+        # Create a ContentFile from the buffer
+        pdf_file = ContentFile(buffer.getvalue())
+        
+        return pdf_file
+        
+    except Exception as e:
+        logger.error(f"Error creating PDF: {str(e)}")
+        raise e 
