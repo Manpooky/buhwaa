@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'drf_yasg',  # Swagger API documentation
     
     # Custom apps
     'apps.visa_info',

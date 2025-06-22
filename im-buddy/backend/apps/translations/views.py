@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from apps.visa_info.models import Language
 from .models import Translation, DocumentTranslation
@@ -13,9 +15,34 @@ from services.llama_service import translate_text
 from services.pdf_service import extract_text_from_pdf, create_pdf_from_text
 
 
+@swagger_auto_schema(
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['text', 'source_language', 'target_language'],
+        properties={
+            'text': openapi.Schema(type=openapi.TYPE_STRING, description='Text to translate'),
+            'source_language': openapi.Schema(type=openapi.TYPE_STRING, description='Source language code'),
+            'target_language': openapi.Schema(type=openapi.TYPE_STRING, description='Target language code'),
+        },
+    ),
+    responses={
+        status.HTTP_200_OK: TranslationSerializer,
+        status.HTTP_400_BAD_REQUEST: 'Bad request',
+    },
+    operation_description="Translate text from source language to target language",
+)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def translate(request):
+    """
+    Translate text from one language to another
+    
+    Requires:
+    - text: The text to translate
+    - source_language: Source language code (e.g., 'en', 'es')
+    - target_language: Target language code
+    """
     text = request.data.get('text')
     source_language = request.data.get('source_language')
     target_language = request.data.get('target_language')
@@ -45,6 +72,38 @@ def translate(request):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='post',
+    manual_parameters=[
+        openapi.Parameter(
+            'document', 
+            openapi.IN_FORM,
+            type=openapi.TYPE_FILE,
+            required=True,
+            description='PDF document to translate'
+        ),
+        openapi.Parameter(
+            'source_language', 
+            openapi.IN_FORM,
+            type=openapi.TYPE_STRING,
+            required=True,
+            description='Source language code (e.g., "en")'
+        ),
+        openapi.Parameter(
+            'target_language', 
+            openapi.IN_FORM,
+            type=openapi.TYPE_STRING,
+            required=True,
+            description='Target language code (e.g., "es")'
+        ),
+    ],
+    responses={
+        status.HTTP_200_OK: DocumentTranslationSerializer,
+        status.HTTP_400_BAD_REQUEST: 'Bad request',
+        status.HTTP_500_INTERNAL_SERVER_ERROR: 'Internal server error',
+    },
+    operation_description="Upload and translate a PDF document",
+)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
@@ -130,6 +189,14 @@ def translate_document(request):
         )
 
 
+@swagger_auto_schema(
+    method='get',
+    responses={
+        status.HTTP_200_OK: DocumentTranslationSerializer,
+        status.HTTP_404_NOT_FOUND: 'Translation not found',
+    },
+    operation_description="Get a specific document translation by ID",
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_document_translation(request, doc_id):
@@ -141,6 +208,18 @@ def get_document_translation(request, doc_id):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='get',
+    responses={
+        status.HTTP_200_OK: openapi.Response(
+            description="File download response",
+            schema=openapi.Schema(type=openapi.TYPE_FILE)
+        ),
+        status.HTTP_404_NOT_FOUND: 'Translation not found',
+        status.HTTP_400_BAD_REQUEST: 'Translation not complete',
+    },
+    operation_description="Download translated document as PDF",
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def download_translated_document(request, doc_id):
@@ -175,6 +254,13 @@ def download_translated_document(request, doc_id):
     return response
 
 
+@swagger_auto_schema(
+    method='get',
+    responses={
+        status.HTTP_200_OK: DocumentTranslationSerializer(many=True),
+    },
+    operation_description="List all document translations for the current user",
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_document_translations(request):
