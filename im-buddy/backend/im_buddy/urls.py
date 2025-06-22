@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
 
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -22,8 +23,11 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # Redirect root URL to Swagger UI
+    path('', RedirectView.as_view(url='/swagger/', permanent=False), name='index'),
+    
     path('admin/', admin.site.urls),
-    # Include the main API urls from the backend root
+    # Include the main API urls from the backend root - use a relative import path
     path('api/', include('urls')),
     
     # API Documentation with Swagger
