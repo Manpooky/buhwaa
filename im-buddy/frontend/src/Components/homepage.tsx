@@ -191,10 +191,10 @@ const ImmigrationFormAnalyzer = () => {
         <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10">
           <header className="text-center mb-10">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Immigration Document Analyzer
+              Immigration Document Assistant
             </h1>
             <p className="text-lg text-gray-600">
-              Effortlessly translate, complete, and analyze your immigration
+              Effortlessly translate and complete your immigration
               documents.
             </p>
           </header>
@@ -306,7 +306,7 @@ const ImmigrationFormAnalyzer = () => {
                     </h2>
                     <p className="text-gray-600 mb-6">
                       Download the translated document, fill it out completely,
-                      and then upload the completed version for final analysis.
+                      and then upload the completed version for final translation.
                     </p>
                     {translatedDocumentDownloadUrl && (
                       <a
