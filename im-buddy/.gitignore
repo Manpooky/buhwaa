@@ -42,3 +42,9 @@ Thumbs.db
 /.vscode
 *.swp
 *.swo 
+venv/
+.env/
+ENV/
+env/
+.venv/
+.venv
